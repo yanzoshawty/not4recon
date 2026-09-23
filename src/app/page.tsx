@@ -8,6 +8,7 @@ import BreachModule from "@/components/modules/BreachModule";
 import DorkModule from "@/components/modules/DorkModule";
 import UsernameModule from "@/components/modules/UsernameModule";
 import SQLiModule from "@/components/modules/SQLiModule";
+import SQLiURLModule from "@/components/modules/SQLiURLModule";
 import NameModule from "@/components/modules/NameModule";
 import {
   Globe,
@@ -19,6 +20,7 @@ import {
   Warning,
   Database,
   IdentificationCard,
+  LinkSimple,
 } from "@phosphor-icons/react";
 
 const MODULES = [
@@ -61,6 +63,14 @@ const MODULES = [
     icon: <Database size={15} />,
     description: "SQL injection payload generator",
     component: <SQLiModule />,
+  },
+  {
+    id: "sqli-url",
+    label: "SQLi URL Analyzer",
+    shortLabel: "SQLIURL",
+    icon: <LinkSimple size={15} />,
+    description: "Inject payloads into URL params",
+    component: <SQLiURLModule />,
   },
   {
     id: "username",
