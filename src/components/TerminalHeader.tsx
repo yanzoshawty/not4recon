@@ -69,8 +69,8 @@ export default function TerminalHeader() {
               className="text-xs font-mono text-terminal-text-secondary"
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              <span className="text-terminal-green">{line.startsWith("[ OK ]") ? "[ OK ]" : ""}</span>
-              {line.replace("[ OK ]", "")}
+              <span className="text-terminal-green">{(line ?? "").startsWith("[ OK ]") ? "[ OK ]" : ""}</span>
+              {(line ?? "").replace("[ OK ]", "")}
             </p>
           ))}
           {bootLines.length < BOOT_LINES.length && (
