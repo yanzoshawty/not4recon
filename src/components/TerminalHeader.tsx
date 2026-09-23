@@ -85,7 +85,7 @@ export default function TerminalHeader() {
           {/* Brand */}
           <div className="flex items-start gap-3">
             <div className="p-2 border border-terminal-border-active rounded bg-terminal-bg-card shadow-terminal-glow">
-              <Eye size={24} className="text-terminal-green text-glow" weight="duotone" />
+              <Eye size={24} className="text-terminal-green text-glow" weight="bold" />
             </div>
             <div>
               <div className="flex items-center gap-2">

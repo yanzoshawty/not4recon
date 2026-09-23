@@ -11,13 +11,13 @@ export async function GET(req: NextRequest) {
   // Validate IP format (basic)
   const ipv4 = /^(\d{1,3}\.){3}\d{1,3}$/;
   const ipv6 = /^[0-9a-fA-F:]+$/;
-  if (!ipv4.test(clean) && !ipv6.test(clean) && clean !== "self") {
+  if (!ipv4.test(clean) && !ipv6.test(clean)) {
     return NextResponse.json({ error: "Invalid IP address format" }, { status: 400 });
   }
 
   try {
     // ip-api.com — free, no key required, 45 req/min
-    const target = clean === "self" ? "" : `/${clean}`;
+    const target = `/${clean}`;
     const res = await fetch(
       `http://ip-api.com/json${target}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,asname,reverse,mobile,proxy,hosting,query`
     );

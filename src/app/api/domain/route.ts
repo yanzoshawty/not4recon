@@ -47,6 +47,10 @@ export async function GET(req: NextRequest) {
 
     // Parse RDAP
     let registrar = "N/A";
+    let registrarUrl = "N/A";
+    let registrantOrg = "N/A";
+    let registrantCountry = "N/A";
+    let abuseEmail = "N/A";
     let createdDate = "N/A";
     let expiresDate = "N/A";
     let updatedDate = "N/A";
@@ -55,18 +59,46 @@ export async function GET(req: NextRequest) {
 
     if (rdapData) {
       const r = rdapData as {
-        entities?: { roles: string[]; vcardArray?: unknown[] }[];
+        entities?: {
+          roles: string[];
+          vcardArray?: unknown[];
+          publicIds?: { type: string; identifier: string }[];
+          links?: { href: string; rel: string }[];
+        }[];
         events?: { eventAction: string; eventDate: string }[];
         status?: string[];
         nameservers?: { ldhName: string }[];
+        links?: { href: string; rel: string }[];
       };
 
       // Registrar
       const registrarEntity = r.entities?.find((e) => e.roles?.includes("registrar"));
       if (registrarEntity?.vcardArray) {
         const vcard = registrarEntity.vcardArray as unknown[][];
-        const fnEntry = (vcard[1] as unknown[][])?.find((v: unknown[]) => v[0] === "fn");
+        const entries = vcard[1] as unknown[][];
+        const fnEntry = entries?.find((v: unknown[]) => v[0] === "fn");
+        const emailEntry = entries?.find((v: unknown[]) => v[0] === "email");
         if (fnEntry) registrar = fnEntry[3] as string;
+        if (emailEntry) abuseEmail = emailEntry[3] as string;
+      }
+      // Registrar URL from links
+      const registrarLink = registrarEntity?.links?.find((l) => l.rel === "self");
+      if (registrarLink) registrarUrl = registrarLink.href;
+
+      // Registrant org & country
+      const registrantEntity = r.entities?.find((e) =>
+        e.roles?.includes("registrant") || e.roles?.includes("administrative")
+      );
+      if (registrantEntity?.vcardArray) {
+        const vcard = registrantEntity.vcardArray as unknown[][];
+        const entries = vcard[1] as unknown[][];
+        const orgEntry = entries?.find((v: unknown[]) => v[0] === "org");
+        const adrEntry = entries?.find((v: unknown[]) => v[0] === "adr");
+        if (orgEntry) registrantOrg = orgEntry[3] as string;
+        if (adrEntry) {
+          const adrVal = adrEntry[3] as string[];
+          registrantCountry = Array.isArray(adrVal) ? (adrVal[6] ?? "N/A") : "N/A";
+        }
       }
 
       // Dates
@@ -84,6 +116,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       domain: clean,
       registrar,
+      registrarUrl,
+      registrantOrg,
+      registrantCountry,
+      abuseEmail,
       created: createdDate,
       expires: expiresDate,
       updated: updatedDate,

@@ -7,6 +7,8 @@ import IPModule from "@/components/modules/IPModule";
 import BreachModule from "@/components/modules/BreachModule";
 import DorkModule from "@/components/modules/DorkModule";
 import UsernameModule from "@/components/modules/UsernameModule";
+import SQLiModule from "@/components/modules/SQLiModule";
+import NameModule from "@/components/modules/NameModule";
 import {
   Globe,
   MapPin,
@@ -15,6 +17,8 @@ import {
   UserCircle,
   GithubLogo,
   Warning,
+  Database,
+  IdentificationCard,
 } from "@phosphor-icons/react";
 
 const MODULES = [
@@ -51,12 +55,28 @@ const MODULES = [
     component: <DorkModule />,
   },
   {
+    id: "sqli",
+    label: "SQLi Payloads",
+    shortLabel: "SQLI",
+    icon: <Database size={15} />,
+    description: "SQL injection payload generator",
+    component: <SQLiModule />,
+  },
+  {
     id: "username",
     label: "Username Lookup",
     shortLabel: "USER",
     icon: <UserCircle size={15} />,
     description: "18 platforms in parallel",
     component: <UsernameModule />,
+  },
+  {
+    id: "name",
+    label: "OSINT by Name",
+    shortLabel: "NAME",
+    icon: <IdentificationCard size={15} />,
+    description: "People search + username variants",
+    component: <NameModule />,
   },
 ];
 

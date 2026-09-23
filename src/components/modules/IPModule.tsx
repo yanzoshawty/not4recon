@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TerminalInput from "@/components/TerminalInput";
 import { ResultBlock, KVRow, TagBadge } from "@/components/ResultBlock";
 import { MapPin, Robot, Shield, WifiHigh } from "@phosphor-icons/react";
@@ -25,17 +25,36 @@ interface IPResult {
   error?: string;
 }
 
+async function fetchIP(ip: string): Promise<IPResult> {
+  const res = await fetch(`/api/ip?q=${encodeURIComponent(ip)}`);
+  return res.json() as Promise<IPResult>;
+}
+
+// Client-side self IP detection via public API directly from browser
+async function detectSelfIP(): Promise<string> {
+  const res = await fetch("https://api.ipify.org?format=json");
+  const data = await res.json() as { ip: string };
+  return data.ip;
+}
+
 export default function IPModule() {
   const [result, setResult] = useState<IPResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [selfMode, setSelfMode] = useState(false);
+  const [clientIP, setClientIP] = useState<string | null>(null);
+
+  // Detect user's real IP on mount (client-side)
+  useEffect(() => {
+    detectSelfIP()
+      .then((ip) => setClientIP(ip))
+      .catch(() => setClientIP(null));
+  }, []);
 
   const handleSubmit = async (value: string) => {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch(`/api/ip?q=${encodeURIComponent(value)}`);
-      const data = await res.json() as IPResult;
+      const data = await fetchIP(value);
       setResult(data);
     } catch {
       setResult({ ip: value, country: "", countryCode: "", region: "", city: "", zip: "", lat: 0, lon: 0, timezone: "", isp: "", org: "", asn: "", asnName: "", reverse: "", flags: { mobile: false, proxy: false, hosting: false }, timestamp: new Date().toISOString(), error: "Network error" });
@@ -49,8 +68,9 @@ export default function IPModule() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch("/api/ip?q=self");
-      const data = await res.json() as IPResult;
+      // Use client-detected IP, not server IP
+      const ip = clientIP ?? await detectSelfIP();
+      const data = await fetchIP(ip);
       setResult(data);
     } catch {
       setResult({ ip: "self", country: "", countryCode: "", region: "", city: "", zip: "", lat: 0, lon: 0, timezone: "", isp: "", org: "", asn: "", asnName: "", reverse: "", flags: { mobile: false, proxy: false, hosting: false }, timestamp: new Date().toISOString(), error: "Could not determine your IP" });
@@ -72,13 +92,13 @@ export default function IPModule() {
         prefix="geoip>"
       />
 
-      {/* My IP shortcut */}
+      {/* My IP shortcut — shows detected IP */}
       <button
         onClick={handleMyIP}
         disabled={loading}
         className="text-[11px] font-mono text-terminal-text-muted hover:text-terminal-cyan border border-terminal-border hover:border-terminal-cyan hover:border-opacity-30 px-2 py-1 rounded transition-all duration-200 disabled:opacity-40"
       >
-        {selfMode ? "querying..." : "→ lookup my own IP"}
+        {selfMode ? "querying..." : clientIP ? `→ lookup my IP (${clientIP})` : "→ lookup my own IP"}
       </button>
 
       {result?.error && (
@@ -95,7 +115,6 @@ export default function IPModule() {
           copyData={copyData}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-            {/* Left column */}
             <div>
               <p className="text-[10px] font-mono text-terminal-text-dim tracking-widest mb-2 flex items-center gap-1.5">
                 <MapPin size={10} /> LOCATION
@@ -111,7 +130,6 @@ export default function IPModule() {
               </div>
             </div>
 
-            {/* Right column */}
             <div className="mt-4 md:mt-0">
               <p className="text-[10px] font-mono text-terminal-text-dim tracking-widest mb-2 flex items-center gap-1.5">
                 <WifiHigh size={10} /> NETWORK
@@ -124,26 +142,15 @@ export default function IPModule() {
                 <KVRow label="rDNS" value={result.reverse || "N/A"} />
               </div>
 
-              {/* Flags */}
               <p className="text-[10px] font-mono text-terminal-text-dim tracking-widest mt-3 mb-2 flex items-center gap-1.5">
                 <Shield size={10} /> FLAGS
               </p>
               <div className="flex flex-wrap gap-1.5">
-                <TagBadge
-                  label="MOBILE"
-                  color={result.flags.mobile ? "amber" : "default"}
-                />
-                <TagBadge
-                  label="PROXY/VPN"
-                  color={result.flags.proxy ? "red" : "default"}
-                />
-                <TagBadge
-                  label="HOSTING"
-                  color={result.flags.hosting ? "cyan" : "default"}
-                />
+                <TagBadge label="MOBILE" color={result.flags.mobile ? "amber" : "default"} />
+                <TagBadge label="PROXY/VPN" color={result.flags.proxy ? "red" : "default"} />
+                <TagBadge label="HOSTING" color={result.flags.hosting ? "cyan" : "default"} />
               </div>
 
-              {/* Map link */}
               <a
                 href={`https://www.openstreetmap.org/?mlat=${result.lat}&mlon=${result.lon}&zoom=10`}
                 target="_blank"

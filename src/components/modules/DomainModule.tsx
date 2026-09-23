@@ -7,6 +7,10 @@ import { ResultBlock, KVRow, TagBadge } from "@/components/ResultBlock";
 interface DomainResult {
   domain: string;
   registrar: string;
+  registrarUrl: string;
+  registrantOrg: string;
+  registrantCountry: string;
+  abuseEmail: string;
   created: string;
   expires: string;
   updated: string;
@@ -41,7 +45,7 @@ export default function DomainModule() {
       const data = await res.json() as DomainResult;
       setResult(data);
     } catch {
-      setResult({ domain: value, registrar: "", created: "", expires: "", updated: "", status: [], nameservers: [], records: [], timestamp: new Date().toISOString(), error: "Network error — check your connection" });
+      setResult({ domain: value, registrar: "", registrarUrl: "N/A", registrantOrg: "N/A", registrantCountry: "N/A", abuseEmail: "N/A", created: "", expires: "", updated: "", status: [], nameservers: [], records: [], timestamp: new Date().toISOString(), error: "Network error — check your connection" });
     } finally {
       setLoading(false);
     }
@@ -79,6 +83,18 @@ export default function DomainModule() {
             <div className="space-y-0">
               <KVRow label="Domain" value={result.domain} accent="green" />
               <KVRow label="Registrar" value={result.registrar || "N/A"} />
+              <KVRow label="Reg. URL" value={result.registrarUrl !== "N/A" ? (
+                <a href={result.registrarUrl} target="_blank" rel="noopener noreferrer" className="text-terminal-cyan hover:text-glow-cyan transition-colors truncate block">
+                  {result.registrarUrl}
+                </a>
+              ) : "N/A"} />
+              <KVRow label="Org" value={result.registrantOrg || "N/A"} accent="cyan" />
+              <KVRow label="Country" value={result.registrantCountry || "N/A"} />
+              <KVRow label="Abuse Email" value={result.abuseEmail !== "N/A" ? (
+                <a href={`mailto:${result.abuseEmail}`} className="text-terminal-amber hover:text-glow-amber transition-colors">
+                  {result.abuseEmail}
+                </a>
+              ) : "N/A"} />
               <KVRow label="Created" value={result.created} accent="cyan" />
               <KVRow label="Expires" value={result.expires} accent="amber" />
               <KVRow label="Updated" value={result.updated} />
