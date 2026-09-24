@@ -10,84 +10,25 @@ import UsernameModule from "@/components/modules/UsernameModule";
 import SQLiModule from "@/components/modules/SQLiModule";
 import SQLiURLModule from "@/components/modules/SQLiURLModule";
 import NameModule from "@/components/modules/NameModule";
+import PhoneModule from "@/components/modules/PhoneModule";
+import EmailFootprintModule from "@/components/modules/EmailFootprintModule";
 import {
-  Globe,
-  MapPin,
-  Lock,
-  MagnifyingGlass,
-  UserCircle,
-  GithubLogo,
-  Warning,
-  Database,
-  IdentificationCard,
-  LinkSimple,
+  Globe, MapPin, Lock, MagnifyingGlass, UserCircle,
+  GithubLogo, Warning, Database, IdentificationCard,
+  LinkSimple, Phone, EnvelopeSimple,
 } from "@phosphor-icons/react";
 
 const MODULES = [
-  {
-    id: "domain",
-    label: "Domain / WHOIS",
-    shortLabel: "DOMAIN",
-    icon: <Globe size={15} />,
-    description: "DNS records + WHOIS via RDAP",
-    component: <DomainModule />,
-  },
-  {
-    id: "ip",
-    label: "IP Geolocation",
-    shortLabel: "GEOIP",
-    icon: <MapPin size={15} />,
-    description: "ISP, ASN, coordinates, flags",
-    component: <IPModule />,
-  },
-  {
-    id: "breach",
-    label: "Breach Check",
-    shortLabel: "BREACH",
-    icon: <Lock size={15} />,
-    description: "Email exposure via HIBP",
-    component: <BreachModule />,
-  },
-  {
-    id: "dork",
-    label: "Google Dorking",
-    shortLabel: "DORK",
-    icon: <MagnifyingGlass size={15} />,
-    description: "Auto-generate dork queries",
-    component: <DorkModule />,
-  },
-  {
-    id: "sqli",
-    label: "SQLi Payloads",
-    shortLabel: "SQLI",
-    icon: <Database size={15} />,
-    description: "SQL injection payload generator",
-    component: <SQLiModule />,
-  },
-  {
-    id: "sqli-url",
-    label: "SQLi URL Analyzer",
-    shortLabel: "SQLIURL",
-    icon: <LinkSimple size={15} />,
-    description: "Inject payloads into URL params",
-    component: <SQLiURLModule />,
-  },
-  {
-    id: "username",
-    label: "Username Lookup",
-    shortLabel: "USER",
-    icon: <UserCircle size={15} />,
-    description: "18 platforms in parallel",
-    component: <UsernameModule />,
-  },
-  {
-    id: "name",
-    label: "OSINT by Name",
-    shortLabel: "NAME",
-    icon: <IdentificationCard size={15} />,
-    description: "People search + username variants",
-    component: <NameModule />,
-  },
+  { id: "domain", label: "Domain / WHOIS", shortLabel: "WHOIS", icon: <Globe size={15} />, description: "DNS records + WHOIS via RDAP", component: <DomainModule /> },
+  { id: "ip", label: "IP Geolocation", shortLabel: "GEOIP", icon: <MapPin size={15} />, description: "ISP, ASN, coordinates, flags", component: <IPModule /> },
+  { id: "breach", label: "Breach Check", shortLabel: "BREACH", icon: <Lock size={15} />, description: "Email exposure via HIBP", component: <BreachModule /> },
+  { id: "dork", label: "Google Dorking", shortLabel: "DORK", icon: <MagnifyingGlass size={15} />, description: "120+ dork queries, 13 categories", component: <DorkModule /> },
+  { id: "sqli", label: "SQLi Payloads", shortLabel: "SQLI", icon: <Database size={15} />, description: "300+ payloads, 13 categories", component: <SQLiModule /> },
+  { id: "sqli-url", label: "SQLi URL Executor", shortLabel: "SQLIURL", icon: <LinkSimple size={15} />, description: "Inject + execute via CORS proxy", component: <SQLiURLModule /> },
+  { id: "username", label: "Username Lookup", shortLabel: "USER", icon: <UserCircle size={15} />, description: "18 platforms in parallel", component: <UsernameModule /> },
+  { id: "name", label: "OSINT by Name", shortLabel: "NAME", icon: <IdentificationCard size={15} />, description: "People search + username variants", component: <NameModule /> },
+  { id: "phone", label: "Phone Footprint", shortLabel: "PHONE", icon: <Phone size={15} />, description: "Carrier + geo + OSINT by phone", component: <PhoneModule /> },
+  { id: "email-fp", label: "Email Footprint", shortLabel: "EMAIL", icon: <EnvelopeSimple size={15} />, description: "50 platform check + breach + MX", component: <EmailFootprintModule /> },
 ];
 
 export default function Home() {
